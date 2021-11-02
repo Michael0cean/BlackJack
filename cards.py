@@ -1,6 +1,13 @@
 import random
 
-suit_names = ['Spade', 'Clubs', 'Diamonds', 'Hearts']
+suits = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
+suit_signs = [ '\u2664', '\u2661', '\u2667', '\u2662']
+cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'V', 'Q', 'K']
+card_values = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+
+
+
+# suits_values = {"Spades":"\u2664", "Hearts":"\u2661", "Clubs": "\u2667", "Diamonds": "\u2662"}
 
 class Card(object):
 #    suit = 0
@@ -10,7 +17,8 @@ class Card(object):
         self.value = value
     
     def show(self):
-        print('{} of {}'.format(self.value, self.suit))
+#        print('{} of {}'.format(self.value, self.suit))
+        print('{} {} (value {})'.format(cards[self.value], self.suit, card_values[self.value]))
         
 
 class Deck(object):
@@ -19,7 +27,7 @@ class Deck(object):
         self.create()
     
     def create(self):
-        for suit in suit_names:
+        for suit in suits:
             for value in range(1, 14):
                 self.cards.append(Card(suit, value))
     
@@ -37,12 +45,17 @@ class Deck(object):
 
 
 class Player(object):
-    def __init__(self):
+    def __init__(self, name):
         self.hand = []
+        self.name = name
     
     def draw(self, deck):
         self.hand.append(deck.draw())
+        return self
 
     def show(self):
         for card in self.hand:
             card.show()
+
+    def discard(self):
+        return self.hand.pop()
