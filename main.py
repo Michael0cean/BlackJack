@@ -1,19 +1,13 @@
-# from cards import Card
-# from cards import Deck
-#from cards import Player
+### IMPORTS
 import os
 import random
 
 
+### GLOBAL SETS AND LISTS
 suits = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
 suit_signs = [ '\u2664', '\u2661', '\u2667', '\u2662']
 cards = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
-#card_names = ['Ace', '2', '3']
-#card_values = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
 
-
-
-# suits_values = {"Spades":"\u2664", "Hearts":"\u2661", "Clubs": "\u2667", "Diamonds": "\u2662"}
 
 ### CLASSES
 
