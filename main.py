@@ -72,18 +72,16 @@ class Deck(object):
 # Player class
 
 class Player(object):
-    def __init__(self, name, dealer=False):
+    def __init__(self, name):
         self.hand = []
         self.name = name
         self.value = 0
         self.aces = 0
-        self.dealer = dealer
   
     def draw(self, deck):
         card = deck.draw()
         self.hand.append(card)
-        if not self.dealer:
-            self.value += card.value
+        self.value += card.value
         if card.rank == 0:      # Ace
             self.aces +=1
         return self
@@ -95,17 +93,26 @@ class Player(object):
 
     def show(self):
         player_cards = ''
+        for card in self.hand:
+            player_cards += card.pair()
+        print('{} has [ {}] with value {}'.format(self.name, player_cards, self.value))       
+
+    def hidden(self):
+        player_cards = ''
         i = 0
         for card in self.hand:
-            if self.dealer and i >= len(self.hand)-1:
+            if i >= len(self.hand)-1:
                 player_cards += '**'
             else:
                 player_cards += card.pair()
             i+=1
-        print('{} has [ {}] with value {}'.format(self.name, player_cards, self.value))       
+#        print('{} has [ {}] with value {}'.format(self.name, player_cards, self.value))       
+        print('{} has [ {}]'.format(self.name, player_cards))       
 
     def discard(self):
         return self.hand.pop()
+
+# Chips class
 
 class Chips(object):
     def __init__(self):
@@ -140,25 +147,32 @@ def hit(deck, player):
     player.adjustment()
 
 def hit_or_stand(deck, player):
-    global playing
-
     while True:
         ask = input('Would you like to hit or stand? Please, enter "h" or "s": ')
 
         if ask[0].lower() == 'h':
             hit(deck, player)
-        elif ask[0].lower == 's':
+        elif ask[0].lower() == 's':
             print ('Player stands, Dealer is palying.')
-            playing = False
+            return False
         else:
             print('Sorry! I didn\'t understand that! Please, try again!')
             continue
         break
+    return True
 
-#    def show_some(player, dealer):
+def play_again():
+    while True:
+        ask = input('Whould you like to play again? Type "y" or "n": ')
+        if ask[0].lower() == 'y':
+            return True
+        elif ask[0].lower() == 'n':
+            return False
+        else:
+            print('Sorry! I didn\'t understand that! Please, try again!')
+            continue
 
-
-### MAIN
+### MAIN (Gameplay)
 
 def main():
     str = ''
@@ -166,19 +180,67 @@ def main():
     os.system('clear')
     print('Welcome to BlackJack!')
     
+    # Set up the player's chips 
+    player_chips = Chips()
+
     while True:
+
+        # Create a shuffle desk
         deck = Deck()
         deck.shuffle()
-        #deck.show()
+     #   deck.show()
  
+        # Create a player and draw two cards
         player = Player('Mike')
         player.draw(deck).draw(deck)
-        player.show()
-
+      
+        # Create a dealer and drow two cards (one hidden)
         dealer = Player('Dealer')
         dealer.draw(deck).draw(deck)
+
+        # Ask player for bet
+        take_bet(player_chips)
+
+        # Show player and dealer cards 
+        player.show()
         dealer.hidden()
 
+        # Ask player to Hit or Stand
+        while hit_or_stand(deck, player):            
+            player.show()
+            dealer.hidden()
+            if player.value > 21:
+                print('PLAYER BUSTS!')
+                player_chips.lose()
+                break
+
+        if player.value <= 21:
+            while dealer.value < 17:
+                hit(deck, dealer)
+
+        player.show()
+        dealer.show()
+
+        if dealer.value > 21:
+            print('DEALER BUSTS!')
+            player_chips.win()
+        elif player.value > 21:
+                print('PLAYER BUSTS!')
+                player_chips.lose()
+        elif dealer.value > player.value:
+            print('DEALER WINS!')
+            player_chips.lose()
+        elif dealer.value < player.value:
+            print('PLAYER WINS!')
+            player_chips.win()
+        else:
+            print('DEALER WINS!')
+            player_chips.lose()
+
+        player_chips.show()
+        
+        if not play_again():
+            break
  #   deck.show()
 
 if __name__ == '__main__':
