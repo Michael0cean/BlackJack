@@ -1,12 +1,17 @@
 import os
-import cards
+from cards import Card
+from cards import Deck
 
 
 
 def main():
-    os.system('clear')
+    str = ''
 
+    os.system('clear')
     
+    deck = Deck()
+    deck.shuffle()
+    deck.show()
   
 if __name__ == '__main__':
     main()
